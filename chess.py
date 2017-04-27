@@ -57,13 +57,6 @@ def convert_coord(alg_notation):
     y = 8 - int(rank)
     return y, x
 
-
-
-
-
-
-
-
 # TODO make an ArgParser
 if len(sys.argv) == 1:
     print_board(get_board())
@@ -86,5 +79,3 @@ elif len(sys.argv) == 3:
 
 else:
     print('Bad options')
-
-
