@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copy this content to a file named 'chess', put it somewhere on your PATH and run `chmod +x chess`
-# Put the 'chess-board.txt' file in the same folder as the 'chess' file
+# Put the '.chessboard' file in the same folder as the 'chess' file
 
 import pathlib
 import sys
