@@ -17,28 +17,42 @@ def get_board():
         print(board_file.read())
     return board
 
-def print_board(board):
-    # Invert colors
-    os.system(r"printf '\e[7m'")
-    piece_map = dict(zip('kqrbnpKQRBNP', '♔♕♖♗♘♙♚♛♜♝♞♟'))
+def square_string(piece, square_is_white):
+    out = ''
+    if piece.lower() in 'kqrbnp':
+        piece_is_white = piece in 'KQRBNP'.lower()      #yeah, yeah. We'll be FEN compliant soon
+        if piece_is_white == square_is_white:
+            # We need the outline version
+            piece_char = dict(zip('kqrbnp', '♔♕♖♗♘♙'))[piece.lower()] + ' '
+        else:
+            # We can use the solid version
+            piece_char = dict(zip('kqrbnp', '♚♛♜♝♞♟'))[piece.lower()] + ' '
+    else:
+        piece_char = '  '
 
-    pretty_board = [[None]*8 for i in range(8)]
-    for i in range(8):
-        for j in range(8):
-            if board[i][j] in piece_map:
-                square = piece_map[ board[i][j] ] + ' '
-            else:
-                square = '::' if (i+j) % 2 else '  '
-            pretty_board[i][j] = square
+    if square_is_white:
+        out += r'\e[0;30;47m'
+    else:
+        out += r'\e[0;37;40m'
 
-    border = '#'
-    final = 20*border + '\n'
-    for line in pretty_board:
-        final += border + ' ' + ''.join(line) + ' ' + border + '\n'
-    final += 20*border + '\n'
-    print(final)
-    # Revert colors
-    os.system(r"printf '\e[0m'")
+    out += piece_char
+    return out
+
+def print_board(board, border=False):
+    string = r"printf '\e[0m"
+    if border:
+        string += r'<>================<>\n'
+    for i, row in enumerate(board):
+        string += r'\e[0m' + ('||' if border else '')
+        for j, piece in enumerate(row):
+            string += square_string(board[i][j], (i+j) % 2)
+        string += r'\e[0m' + ('||' if border else '') + r'\n'
+    if border:
+        string += '<>================<>\n'
+    string += "'"
+    with open('print-chessboard.sh', 'w') as f:
+        f.write(string)
+    os.system(string)
 
 def write_board(board):
     with open(here / '.chessboard', 'w') as board_file:
